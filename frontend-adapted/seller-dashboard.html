@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>БіргеСатайық — Кабинет продавца</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f1117;--ink2:#3a3d4a;--ink3:#7a7d8a;
+  --bg:#f7f5f0;--white:#fff;
+  --accent:#2d6a4f;--accent2:#52b788;--accent-light:#d8f3dc;
+  --gold:#e9c46a;--coral:#f4836c;
+  --radius:16px;--radius-sm:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Golos Text',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex}
+
+.sidebar{width:220px;flex-shrink:0;background:var(--ink);display:flex;flex-direction:column;padding:28px 0;position:fixed;top:0;left:0;bottom:0}
+.sidebar-logo{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:#fff;padding:0 24px;margin-bottom:36px}
+.sidebar-logo span{color:var(--accent2)}
+.nav-section{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.08em;text-transform:uppercase;padding:0 24px;margin-bottom:8px;margin-top:20px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 24px;color:rgba(255,255,255,.5);font-size:13px;font-weight:500;text-decoration:none;transition:all .15s;position:relative;cursor:pointer}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-item.active{background:rgba(82,183,136,.15);color:#fff}
+.nav-item.active::before{content:'';position:absolute;left:0;top:4px;bottom:4px;width:3px;background:var(--accent2);border-radius:0 2px 2px 0}
+.sidebar-bottom{margin-top:auto;padding:0 24px}
+.shop-pill{background:rgba(255,255,255,.07);border-radius:var(--radius-sm);padding:10px 12px;display:flex;align-items:center;gap:8px}
+.shop-av{width:28px;height:28px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.shop-name{font-size:12px;font-weight:600;color:#fff}
+.shop-plan{font-size:10px;color:rgba(255,255,255,.4)}
+
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column}
+.topbar{background:var(--white);border-bottom:1px solid rgba(0,0,0,.06);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40}
+.topbar-title{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;letter-spacing:-.02em}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.btn{padding:9px 18px;border-radius:var(--radius-sm);font-family:'Golos Text',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:1.5px solid rgba(0,0,0,.1);background:var(--white);color:var(--ink)}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:#1e4d38;border-color:#1e4d38;color:#fff}
+.content{padding:28px 32px}
+
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat{background:var(--white);border-radius:var(--radius-sm);padding:16px;border:1px solid rgba(0,0,0,.06)}
+.stat-label{font-size:11px;color:var(--ink3);font-weight:600;text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px}
+.stat-val{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.03em}
+
+.products-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.products-title{font-size:14px;font-weight:600;color:var(--ink)}
+.products-filters{display:flex;gap:6px}
+.filter-btn{padding:5px 12px;border-radius:100px;font-size:12px;font-weight:600;border:none;cursor:pointer;background:transparent;color:var(--ink3);font-family:inherit;transition:all .2s}
+.filter-btn.active{background:var(--accent-light);color:var(--accent)}
+
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:16px}
+.product-card{background:var(--white);border-radius:var(--radius);border:1px solid rgba(0,0,0,.06);overflow:hidden;transition:all .2s;position:relative}
+.product-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.08)}
+.product-img{height:160px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:48px;position:relative;overflow:hidden}
+.product-img img{width:100%;height:100%;object-fit:cover}
+.product-badge{position:absolute;top:8px;left:8px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:100px}
+.product-body{padding:12px}
+.product-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.product-code{font-size:11px;color:var(--ink3);margin-bottom:8px}
+.product-prices{display:flex;align-items:center;gap:8px}
+.price-retail{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;color:var(--ink)}
+.price-wholesale{font-size:11px;color:var(--ink3);text-decoration:line-through}
+.product-actions{display:flex;gap:6px;margin-top:10px}
+.product-btn{flex:1;padding:6px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid rgba(0,0,0,.1);background:transparent;cursor:pointer;font-family:inherit;transition:all .2s;color:var(--ink2)}
+.product-btn:hover{border-color:var(--accent);color:var(--accent)}
+.product-btn.danger:hover{border-color:var(--coral);color:var(--coral)}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.show{display:flex}
+.modal{background:var(--white);border-radius:var(--radius);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:modalIn .25s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+.modal-head{padding:24px 24px 0;display:flex;align-items:flex-start;justify-content:space-between}
+.modal-title{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:800;letter-spacing:-.02em}
+.modal-close{width:32px;height:32px;border-radius:50%;border:none;background:var(--bg);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.modal-body{padding:20px 24px 24px;display:flex;flex-direction:column;gap:14px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:11px 14px;border:1.5px solid rgba(0,0,0,.1);border-radius:var(--radius-sm);font-family:'Golos Text',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field textarea{resize:none;height:72px}
+.two-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.img-upload{border:2px dashed rgba(0,0,0,.12);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;position:relative;transition:all .2s}
+.img-upload:hover{border-color:var(--accent2);background:var(--accent-light)}
+.img-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.img-preview{width:100%;height:140px;object-fit:cover;border-radius:8px;display:none}
+.modal-actions{display:flex;gap:10px;padding:0 24px 24px}
+.modal-cancel{flex:1;padding:12px;border:1.5px solid rgba(0,0,0,.1);border-radius:var(--radius-sm);background:none;font-family:'Golos Text',sans-serif;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink2)}
+.modal-submit{flex:2;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-family:'Golos Text',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+.modal-submit:hover{background:#1e4d38}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 22px;border-radius:100px;font-size:13px;font-weight:500;z-index:999;white-space:nowrap;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.loading-spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--accent);border-radius:50%;border-top-color:transparent;animation:spin 0.6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:48px 24px;color:var(--ink3)}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo">Бірге<span>Сатайық</span></div>
+  <div class="nav-section">Магазин</div>
+  <div class="nav-item active">📊 Дашборд</div>
+  <div class="nav-item" onclick="location.href='seller-orders.html'">📦 Заказы</div>
+  <div class="nav-item" onclick="location.href='seller-products.html'">🛍️ Товары</div>
+  <div class="nav-section">Команда</div>
+  <div class="nav-item" onclick="location.href='seller-affiliates.html'">👥 Продажники</div>
+  <div class="nav-item" onclick="location.href='seller-payouts.html'">💸 Выплаты</div>
+  <div class="nav-section">Настройки</div>
+  <div class="nav-item" onclick="location.href='seller-settings.html'">⚙️ Магазин</div>
+  <div class="nav-item" onclick="logout()">🚪 Выйти</div>
+  <div class="sidebar-bottom">
+    <div class="shop-pill">
+      <div class="shop-av" id="shop-av">BD</div>
+      <div><div class="shop-name" id="shop-name">Загрузка...</div><div class="shop-plan" id="shop-plan">Тариф: Старт</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Дашборд продавца</div>
+    <div class="topbar-right">
+      <button class="btn" onclick="refreshData()">🔄 Обновить</button>
+      <button class="btn btn-primary" onclick="openAddProductModal()">+ Добавить товар</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="stats-row">
+      <div class="stat"><div class="stat-label">Всего товаров</div><div class="stat-val" id="stat-total">0</div></div>
+      <div class="stat"><div class="stat-label">Заказов (месяц)</div><div class="stat-val" id="stat-orders">0</div></div>
+      <div class="stat"><div class="stat-label">Выручка (месяц)</div><div class="stat-val" id="stat-revenue">0₸</div></div>
+      <div class="stat"><div class="stat-label">Продажников</div><div class="stat-val" id="stat-affiliates">0</div></div>
+    </div>
+
+    <div class="products-head">
+      <div class="products-title">Мои товары</div>
+      <div class="products-filters">
+        <button class="filter-btn active" onclick="filterProducts('all',this)">Все</button>
+        <button class="filter-btn" onclick="filterProducts('active',this)">Активные</button>
+        <button class="filter-btn" onclick="filterProducts('inactive',this)">Скрытые</button>
+      </div>
+    </div>
+    <div class="products-grid" id="products-grid"></div>
+    <div id="empty-state" class="empty" style="display:none">
+      <div style="font-size:48px;margin-bottom:12px">🛍️</div>
+      <div class="empty-title">Товаров пока нет</div>
+      <div class="empty-sub">Нажмите «+ Добавить товар» чтобы начать</div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD/EDIT PRODUCT MODAL -->
+<div class="overlay" id="product-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title">Новый товар</div>
+      <button class="modal-close" onclick="closeProductModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Фото товара</label>
+        <div class="img-upload" id="modal-img-upload">
+          <input type="file" accept="image/*" onchange="previewModalImg(this)">
+          <div id="modal-img-placeholder">
+            <div style="font-size:28px;margin-bottom:6px">📷</div>
+            <div style="font-size:13px;font-weight:600;color:var(--ink2)">Нажми или перетащи фото</div>
+            <div style="font-size:11px;color:var(--ink3);margin-top:3px">JPG, PNG до 5 МБ</div>
+          </div>
+          <img class="img-preview" id="modal-img-preview">
+        </div>
+      </div>
+      <div class="field">
+        <label>Название товара</label>
+        <input type="text" id="product-name" placeholder="Комплект Роза">
+      </div>
+      <div class="two-fields">
+        <div class="field"><label>Код товара</label><input type="text" id="product-code" placeholder="BD-001"></div>
+        <div class="field"><label>Категория</label><select id="product-cat"></select></div>
+      </div>
+      <div class="two-fields">
+        <div class="field"><label>Цена розница (₸)</label><input type="number" id="product-retail" placeholder="8500"></div>
+        <div class="field"><label>Цена опт (₸)</label><input type="number" id="product-wholesale" placeholder="5000"></div>
+      </div>
+      <div class="field"><label>Размеры (через запятую)</label><input type="text" id="product-sizes" placeholder="S, M, L, XL"></div>
+      <div class="field"><label>Описание</label><textarea id="product-desc" placeholder="Кружевной комплект, мягкий материал..."></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeProductModal()">Отмена</button>
+      <button class="modal-submit" onclick="saveProduct()">Сохранить товар</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://your-project.supabase.co'; // ЗАМЕНИТЕ
+const SUPABASE_ANON_KEY = 'your-anon-key'; // ЗАМЕНИТЕ
+
+let products = [];
+let categories = [];
+let editingProductId = null;
+let activeFilter = 'all';
+let currentShop = null;
+let userToken = localStorage.getItem('birge_token');
+
+// Auth check
+function checkAuth() {
+  if (!userToken) {
+    window.location.href = 'register.html';
+  }
+}
+
+async function loadShop() {
+  const userId = localStorage.getItem('birge_user_id');
+  const resp = await fetch(`${SUPABASE_URL}/rest/v1/shops?seller_id=eq.${userId}`, {
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${userToken}` }
+  });
+  const shops = await resp.json();
+  if (shops && shops.length) {
+    currentShop = shops[0];
+    document.getElementById('shop-name').textContent = currentShop.name;
+    document.getElementById('shop-av').textContent = currentShop.name.slice(0,2).toUpperCase();
+    localStorage.setItem('birge_shop_id', currentShop.id);
+    return currentShop.id;
+  }
+  return null;
+}
+
+async function loadCategories() {
+  const resp = await fetch(`${SUPABASE_URL}/rest/v1/categories`, {
+    headers: { 'apikey': SUPABASE_ANON_KEY }
+  });
+  categories = await resp.json();
+  const select = document.getElementById('product-cat');
+  select.innerHTML = categories.map(c => `<option value="${c.id}">${c.icon || '📦'} ${c.name}</option>`).join('');
+}
+
+async function loadProducts() {
+  if (!currentShop) return;
+  const resp = await fetch(`${SUPABASE_URL}/rest/v1/products?shop_id=eq.${currentShop.id}&order=created_at.desc`, {
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${userToken}` }
+  });
+  products = await resp.json();
+  renderProducts();
+  updateStats();
+}
+
+function renderProducts() {
+  let filtered = products;
+  if (activeFilter === 'active') filtered = products.filter(p => p.is_active);
+  if (activeFilter === 'inactive') filtered = products.filter(p => !p.is_active);
+  
+  const grid = document.getElementById('products-grid');
+  const empty = document.getElementById('empty-state');
+  if (!filtered.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.innerHTML = filtered.map(p => {
+    const cat = categories.find(c => c.id === p.category_id);
+    return `
+      <div class="product-card">
+        <div class="product-img">
+          ${p.img_url ? `<img src="${p.img_url}">` : `<span>${cat?.icon || '📦'}</span>`}
+          <span class="product-badge">${cat?.name || 'Товар'}</span>
+        </div>
+        <div class="product-body">
+          <div class="product-name">${p.name}</div>
+          <div class="product-code">${p.code || ''} · ${p.sizes?.join(', ') || ''}</div>
+          <div class="product-prices">
+            <span class="price-retail">${p.retail_price.toLocaleString('ru')}₸</span>
+            ${p.wholesale_price ? `<span class="price-wholesale">${p.wholesale_price.toLocaleString('ru')}₸</span>` : ''}
+          </div>
+          <div class="product-actions">
+            <button class="product-btn" onclick="editProduct('${p.id}')">✏️ Изменить</button>
+            <button class="product-btn danger" onclick="deleteProduct('${p.id}')">🗑️ Удалить</button>
+            <button class="product-btn" onclick="toggleProductActive('${p.id}', ${!p.is_active})">${p.is_active ? '🙈 Скрыть' : '👁️ Показать'}</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function updateStats() {
+  document.getElementById('stat-total').textContent = products.length;
+  // Load orders stats
+  const resp = await fetch(`${SUPABASE_URL}/rest/v1/orders?shop_id=eq.${currentShop.id}&status=eq.confirmed&created_at=gte.${new Date(new Date().setMonth(new Date().getMonth()-1)).toISOString()}`, {
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${userToken}` }
+  });
+  const orders = await resp.json();
+  const revenue = orders.reduce((sum, o) => sum + o.seller_amount, 0);
+  document.getElementById('stat-orders').textContent = orders.length;
+  document.getElementById('stat-revenue').textContent = revenue.toLocaleString('ru') + '₸';
+  
+  const affResp = await fetch(`${SUPABASE_URL}/rest/v1/shop_affiliates?shop_id=eq.${currentShop.id}`, {
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${userToken}` }
+  });
+  const affiliates = await affResp.json();
+  document.getElementById('stat-affiliates').textContent = affiliates.length;
+}
+
+function filterProducts(filter, btn) {
+  activeFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts();
+}
+
+function openAddProductModal() {
+  editingProductId = null;
+  document.getElementById('modal-title').textContent = 'Новый товар';
+  document.getElementById('product-name').value = '';
+  document.getElementById('product-code').value = '';
+  document.getElementById('product-retail').value = '';
+  document.getElementById('product-wholesale').value = '';
+  document.getElementById('product-sizes').value = '';
+  document.getElementById('product-desc').value = '';
+  document.getElementById('product-cat').selectedIndex = 0;
+  document.getElementById('modal-img-preview').style.display = 'none';
+  document.getElementById('modal-img-placeholder').style.display = 'block';
+  document.getElementById('product-modal').classList.add('show');
+}
+
+async function editProduct(id) {
+  const product = products.find(p => p.id === id);
+  if (!product) return;
+  editingProductId = id;
+  document.getElementById('modal-title').textContent = 'Редактировать товар';
+  document.getElementById('product-name').value = product.name;
+  document.getElementById('product-code').value = product.code || '';
+  document.getElementById('product-retail').value = product.retail_price;
+  document.getElementById('product-wholesale').value = product.wholesale_price || '';
+  document.getElementById('product-sizes').value = (product.sizes || []).join(', ');
+  document.getElementById('product-desc').value = product.description || '';
+  document.getElementById('product-cat').value = product.category_id;
+  if (product.img_url) {
+    document.getElementById('modal-img-preview').src = product.img_url;
+    document.getElementById('modal-img-preview').style.display = 'block';
+    document.getElementById('modal-img-placeholder').style.display = 'none';
+  }
+  document.getElementById('product-modal').classList.add('show');
+}
+
+async function saveProduct() {
+  const name = document.getElementById('product-name').value.trim();
+  const retail = parseInt(document.getElementById('product-retail').value);
+  if (!name || !retail) { showToast('Введите название и цену'); return; }
+  
+  const sizes = document.getElementById('product-sizes').value.split(',').map(s => s.trim()).filter(s => s);
+  const productData = {
+    shop_id: currentShop.id,
+    name,
+    code: document.getElementById('product-code').value,
+    category_id: parseInt(document.getElementById('product-cat').value),
+    retail_price: retail,
+    wholesale_price: parseInt(document.getElementById('product-wholesale').value) || null,
+    sizes,
+    description: document.getElementById('product-desc').value,
+    is_active: true
+  };
+  
+  const imgPreview = document.getElementById('modal-img-preview');
+  if (imgPreview.style.display !== 'none' && imgPreview.src && !imgPreview.src.includes('blob:')) {
+    productData.img_url = imgPreview.src;
+  }
+  
+  const url = editingProductId 
+    ? `${SUPABASE_URL}/rest/v1/products?id=eq.${editingProductId}`
+    : `${SUPABASE_URL}/rest/v1/products`;
+  
+  const method = editingProductId ? 'PATCH' : 'POST';
+  const body = editingProductId ? productData : [productData];
+  
+  const resp = await fetch(url, {
+    method,
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${userToken}` },
+    body: JSON.stringify(body)
+  });
+  
+  if (resp.ok) {
+    showToast(editingProductId ? 'Товар обновлён ✓' : 'Товар добавлен ✓');
+    closeProductModal();
+    loadProducts();
+  } else {
+    showToast('Ошибка сохранения');
+  }
+}
+
+async function deleteProduct(id) {
+  if (!confirm('Удалить товар?')) return;
+  const resp = await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}`, {
+    method: 'DELETE',
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${userToken}` }
+  });
+  if (resp.ok) {
+    showToast('Товар удалён');
+    loadProducts();
+  }
+}
+
+async function toggleProductActive(id, isActive) {
+  const resp = await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${userToken}` },
+    body: JSON.stringify({ is_active: isActive })
+  });
+  if (resp.ok) loadProducts();
+}
+
+function previewModalImg(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('modal-img-preview');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    document.getElementById('modal-img-placeholder').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function closeProductModal() {
+  document.getElementById('product-modal').classList.remove('show');
+}
+
+function closeModal(e) {
+  if (e.target.id === 'product-modal') closeProductModal();
+}
+
+function refreshData() {
+  loadProducts();
+}
+
+function logout() {
+  localStorage.removeItem('birge_token');
+  localStorage.removeItem('birge_user_id');
+  localStorage.removeItem('birge_shop_id');
+  window.location.href = 'index.html';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+async function init() {
+  checkAuth();
+  await loadShop();
+  if (currentShop) {
+    await loadCategories();
+    await loadProducts();
+  }
+}
+
+init();
+</script>
+</body>
+</html>
