@@ -1,0 +1,27 @@
+{
+  "name": "birge-satayiq",
+  "version": 2,
+  "buildCommand": "echo 'Static site, no build needed'",
+  "outputDirectory": "supabase-birge/frontend-adapted",
+  "installCommand": "echo 'No dependencies'",
+  "framework": null,
+  "env": {
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_ANON_KEY": "@supabase_anon_key"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        }
+      ]
+    }
+  ]
+}
